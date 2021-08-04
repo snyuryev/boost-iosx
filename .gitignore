@@ -2,6 +2,9 @@
 scripts/.DS_Store
 /boost*
 /frameworks
+scripts/boost*
+scripts/frameworks
+scripts/frameworks.built
 /scripts/ICUdep.xcworkspace
 /scripts/Pods
 /scripts/Podfile.lock
