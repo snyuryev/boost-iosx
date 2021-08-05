@@ -38,16 +38,6 @@ if [ ! -f boost/b2 ]; then
 	popd
 fi
 
-# ############### ICU
-# if [ ! -d $SCRIPT_DIR/Pods/icu4c-iosx/product ]; then
-# 	pushd $SCRIPT_DIR
-# 	pod install --verbose
-# 	popd
-# 	mkdir $SCRIPT_DIR/Pods/icu4c-iosx/product/lib
-# fi
-# ICU_PATH=$SCRIPT_DIR/Pods/icu4c-iosx/product
-# ############### ICU
-
 pushd boost
 
 echo patching boost...
@@ -75,8 +65,6 @@ fi
 patch tools/build/src/build/configure.jam $SCRIPT_DIR/configure.jam.patch
 fi
 
-#LIBS_TO_BUILD="--with-locale"
-#LIBS_TO_BUILD="--with-atomic --with-chrono --with-container --with-context --with-contract --with-coroutine --with-date_time --with-exception --with-fiber --with-filesystem --with-graph --with-iostreams --with-json --with-locale --with-log --with-math --with-nowide --with-program_options --with-random --with-regex --with-serialization --with-stacktrace --with-system --with-test --with-thread --with-timer --with-type_erasure --with-wave"
 LIBS_TO_BUILD="--with-filesystem --with-system"
 
 B2_BUILD_OPTIONS="release link=static runtime-link=shared define=BOOST_SPIRIT_THREADSAFE"
@@ -153,45 +141,8 @@ build_xcframework()
 }
 
 if true; then
-# build_xcframework boost_atomic
-# build_xcframework boost_chrono
-# build_xcframework boost_container
-# build_xcframework boost_context
-# build_xcframework boost_contract
-# build_xcframework boost_coroutine
-# build_xcframework boost_date_time
-# build_xcframework boost_exception
-# build_xcframework boost_fiber
 build_xcframework boost_filesystem
-# build_xcframework boost_graph
-# build_xcframework boost_iostreams
-# build_xcframework boost_json
-# build_xcframework boost_locale
-# build_xcframework boost_log
-# build_xcframework boost_log_setup
-# build_xcframework boost_math_c99
-# build_xcframework boost_math_c99l
-# build_xcframework boost_math_c99f
-# build_xcframework boost_math_tr1
-# build_xcframework boost_math_tr1l
-# build_xcframework boost_math_tr1f
-# build_xcframework boost_nowide
-# build_xcframework boost_program_options
-# build_xcframework boost_random
-# build_xcframework boost_regex
-# build_xcframework boost_serialization
-# build_xcframework boost_wserialization
-#build_xcframework boost_stacktrace_addr2line
-# build_xcframework boost_stacktrace_basic
-# build_xcframework boost_stacktrace_noop
 build_xcframework boost_system
-# build_xcframework boost_prg_exec_monitor
-# build_xcframework boost_test_exec_monitor
-# build_xcframework boost_unit_test_framework
-# build_xcframework boost_thread
-# build_xcframework boost_timer
-# build_xcframework boost_type_erasure
-# build_xcframework boost_wave
 
 mkdir "$BUILD_DIR/frameworks/Headers"
 cp -R boost "$BUILD_DIR/frameworks/Headers/"
