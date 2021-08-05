@@ -8,3 +8,4 @@ scripts/frameworks.built
 /scripts/ICUdep.xcworkspace
 /scripts/Pods
 /scripts/Podfile.lock
+scripts/boost_1_76_0.tar.bz2
