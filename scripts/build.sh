@@ -82,28 +82,6 @@ if true; then
 if [[ -f tools/build/src/user-config.jam ]]; then
 	rm -f tools/build/src/user-config.jam
 fi
-./b2 -j8 --stagedir=stage/macosx cxxflags="-std=c++17" -sICU_PATH="$ICU_PATH" toolset=darwin address-model=64 architecture=$BOOST_ARC $B2_BUILD_OPTIONS $LIBS_TO_BUILD
-rm -rf bin.v2
-fi
-
-if true; then
-if [[ -f tools/build/src/user-config.jam ]]; then
-	rm -f tools/build/src/user-config.jam
-fi
-cat >> tools/build/src/user-config.jam <<EOF
-using darwin : catalyst : clang++ -arch $HOST_ARC --target=$BOOST_ARC-apple-ios13-macabi -isysroot $MACSYSROOT/SDKs/MacOSX.sdk -I$MACSYSROOT/SDKs/MacOSX.sdk/System/iOSSupport/usr/include/ -isystem $MACSYSROOT/SDKs/MacOSX.sdk/System/iOSSupport/usr/include -iframework $MACSYSROOT/SDKs/MacOSX.sdk/System/iOSSupport/System/Library/Frameworks
-: <striper> <root>$MACSYSROOT
-: <architecture>$BOOST_ARC
-;
-EOF
-./b2 -j8 --stagedir=stage/catalyst cxxflags="-std=c++17" -sICU_PATH="$ICU_PATH" toolset=darwin-catalyst address-model=64 architecture=$BOOST_ARC $B2_BUILD_OPTIONS $LIBS_TO_BUILD
-rm -rf bin.v2
-fi
-
-if true; then
-if [[ -f tools/build/src/user-config.jam ]]; then
-	rm -f tools/build/src/user-config.jam
-fi
 cat >> tools/build/src/user-config.jam <<EOF
 using darwin : ios : clang++ -arch arm64 -fembed-bitcode-marker -isysroot $DEVSYSROOT/SDKs/iPhoneOS.sdk
 : <striper> <root>$DEVSYSROOT 
@@ -119,12 +97,26 @@ if [[ -f tools/build/src/user-config.jam ]]; then
 	rm -f tools/build/src/user-config.jam
 fi
 cat >> tools/build/src/user-config.jam <<EOF
-using darwin : iossim : clang++ -arch $HOST_ARC -fembed-bitcode-marker -isysroot $SIMSYSROOT/SDKs/iPhoneSimulator.sdk
+using darwin : iossim : clang++ -arch arm64 -fembed-bitcode-marker -isysroot $SIMSYSROOT/SDKs/iPhoneSimulator.sdk
 : <striper> <root>$SIMSYSROOT 
-: <architecture>$BOOST_ARC <target-os>iphone 
+: <architecture>arm <target-os>iphone 
 ;
 EOF
-./b2 -j8 --stagedir=stage/iossim cxxflags="-std=c++17" -sICU_PATH="$ICU_PATH" toolset=darwin-iossim address-model=64 architecture=$BOOST_ARC target-os=iphone define=BOOST_TEST_NO_MAIN $B2_BUILD_OPTIONS $LIBS_TO_BUILD
+./b2 -j8 --stagedir=stage/iossim_arm64 cxxflags="-std=c++17" -sICU_PATH="$ICU_PATH" toolset=darwin-iossim address-model=64 architecture=arm target-os=iphone define=BOOST_TEST_NO_MAIN $B2_BUILD_OPTIONS $LIBS_TO_BUILD
+rm -rf bin.v2
+fi
+
+if true; then
+if [[ -f tools/build/src/user-config.jam ]]; then
+	rm -f tools/build/src/user-config.jam
+fi
+cat >> tools/build/src/user-config.jam <<EOF
+using darwin : iossim : clang++ -arch x86_64 -fembed-bitcode-marker -isysroot $SIMSYSROOT/SDKs/iPhoneSimulator.sdk
+: <striper> <root>$SIMSYSROOT 
+: <architecture>x86 <target-os>iphone 
+;
+EOF
+./b2 -j8 --stagedir=stage/iossim_x86_64 cxxflags="-std=c++17" -sICU_PATH="$ICU_PATH" toolset=darwin-iossim address-model=64 architecture=x86 target-os=iphone define=BOOST_TEST_NO_MAIN $B2_BUILD_OPTIONS $LIBS_TO_BUILD
 rm -rf bin.v2
 fi
 
@@ -137,7 +129,17 @@ mkdir "$BUILD_DIR/frameworks"
 
 build_xcframework()
 {
-	xcodebuild -create-xcframework -library stage/macosx/lib/lib$1.a -library stage/catalyst/lib/lib$1.a -library stage/ios/lib/lib$1.a -library stage/iossim/lib/lib$1.a -output "$BUILD_DIR/frameworks/$1.xcframework"
+	mkdir -p stage/iossim/lib
+
+	lipo -create                        \
+        "stage/iossim_arm64/lib/lib$1.a"    \
+        "stage/iossim_x86_64/lib/lib$1.a"   \
+        -output "stage/iossim/lib/lib$1.a"     
+
+	xcodebuild -create-xcframework                     \
+		-library stage/ios/lib/lib$1.a                 \
+		-library stage/iossim/lib/lib$1.a              \
+		-output "$BUILD_DIR/frameworks/$1.xcframework"
 }
 
 if true; then
