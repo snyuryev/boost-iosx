@@ -83,7 +83,7 @@ if [[ -f tools/build/src/user-config.jam ]]; then
 	rm -f tools/build/src/user-config.jam
 fi
 cat >> tools/build/src/user-config.jam <<EOF
-using darwin : ios : clang++ -arch arm64 -fembed-bitcode-marker -isysroot $DEVSYSROOT/SDKs/iPhoneOS.sdk
+using darwin : ios : clang++ -arch arm64 -fembed-bitcode -isysroot $DEVSYSROOT/SDKs/iPhoneOS.sdk
 : <striper> <root>$DEVSYSROOT 
 : <architecture>arm <target-os>iphone 
 ;
@@ -97,7 +97,7 @@ if [[ -f tools/build/src/user-config.jam ]]; then
 	rm -f tools/build/src/user-config.jam
 fi
 cat >> tools/build/src/user-config.jam <<EOF
-using darwin : iossim : clang++ -arch arm64 -fembed-bitcode-marker -isysroot $SIMSYSROOT/SDKs/iPhoneSimulator.sdk
+using darwin : iossim : clang++ -arch arm64 -fembed-bitcode -isysroot $SIMSYSROOT/SDKs/iPhoneSimulator.sdk
 : <striper> <root>$SIMSYSROOT 
 : <architecture>arm <target-os>iphone 
 ;
@@ -111,7 +111,7 @@ if [[ -f tools/build/src/user-config.jam ]]; then
 	rm -f tools/build/src/user-config.jam
 fi
 cat >> tools/build/src/user-config.jam <<EOF
-using darwin : iossim : clang++ -arch x86_64 -fembed-bitcode-marker -isysroot $SIMSYSROOT/SDKs/iPhoneSimulator.sdk
+using darwin : iossim : clang++ -arch x86_64 -fembed-bitcode -isysroot $SIMSYSROOT/SDKs/iPhoneSimulator.sdk
 : <striper> <root>$SIMSYSROOT 
 : <architecture>x86 <target-os>iphone 
 ;
